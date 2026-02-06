@@ -1,0 +1,36 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+nuget.config.user
+
+# Publish / artifacts
+publish/
+artifacts/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+Desktop.ini
+
+# WinUI / XAML generated
+Generated Files/
+AppPackages/
+
+# WebView2 user data (if emitted)
+*.WebView2/
+EBWebView/

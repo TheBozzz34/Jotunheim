@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Jotunheim.App/Jotunheim.App.csproj" />
+  </Folder>
+</Solution>

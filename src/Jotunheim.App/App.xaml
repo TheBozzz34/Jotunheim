@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application
+    x:Class="Jotunheim.App.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Jotunheim.App"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    RequestedTheme="Dark"
+    mc:Ignorable="d">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Other merged dictionaries here -->
+            </ResourceDictionary.MergedDictionaries>
+            <Color x:Key="BrandInk">#E6F0FF</Color>
+            <Color x:Key="BrandSlate">#9CB2D8</Color>
+            <Color x:Key="BrandAccent">#45D6E6</Color>
+            <Color x:Key="BrandAccentDim">#0B8EA2</Color>
+            <Color x:Key="BrandGlow">#F6C453</Color>
+            <Color x:Key="Surface">#121A2B</Color>
+            <Color x:Key="SurfaceMuted">#0E1627</Color>
+            <Color x:Key="BorderSoft">#22304A</Color>
+            <Color x:Key="TextMuted">#8AA0C2</Color>
+
+            <SolidColorBrush x:Key="InkBrush" Color="{StaticResource BrandInk}" />
+            <SolidColorBrush x:Key="SlateBrush" Color="{StaticResource BrandSlate}" />
+            <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource BrandAccent}" />
+            <SolidColorBrush x:Key="AccentDimBrush" Color="{StaticResource BrandAccentDim}" />
+            <SolidColorBrush x:Key="GlowBrush" Color="{StaticResource BrandGlow}" />
+            <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource Surface}" />
+            <SolidColorBrush x:Key="SurfaceMutedBrush" Color="{StaticResource SurfaceMuted}" />
+            <SolidColorBrush x:Key="BorderSoftBrush" Color="{StaticResource BorderSoft}" />
+            <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMuted}" />
+
+            <FontFamily x:Key="PrimaryFont">Bahnschrift</FontFamily>
+            <FontFamily x:Key="DataFont">Consolas</FontFamily>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource PrimaryFont}" />
+                <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            </Style>
+
+            <Style TargetType="Control">
+                <Setter Property="FontFamily" Value="{StaticResource PrimaryFont}" />
+            </Style>
+
+            <Style x:Key="SectionHeader" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <Style x:Key="Caption" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            </Style>
+
+            <Style x:Key="CardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+                <Setter Property="CornerRadius" Value="16" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="16" />
+            </Style>
+
+            <Style x:Key="PrimaryButton" TargetType="Button">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#FF45D6E6" Offset="0" />
+                            <GradientStop Color="#FF0B8EA2" Offset="1" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="#0B0F19" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <Style x:Key="GhostButton" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Padding" Value="16,10" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+            </Style>
+
+            <Style TargetType="TextBox">
+                <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+                <Setter Property="PlaceholderForeground" Value="{StaticResource TextMutedBrush}" />
+                <Setter Property="CornerRadius" Value="10" />
+            </Style>
+
+            <Style TargetType="PasswordBox">
+                <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+                <Setter Property="CornerRadius" Value="10" />
+            </Style>
+
+            <Style TargetType="ComboBox">
+                <Setter Property="Background" Value="{StaticResource SurfaceMutedBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderSoftBrush}" />
+                <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+                <Setter Property="CornerRadius" Value="10" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

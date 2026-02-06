@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Jotunheim.App (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Jotunheim.App (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

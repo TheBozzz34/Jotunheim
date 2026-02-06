@@ -1,0 +1,197 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jotunheim Map</title>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin="" />
+  <style>
+    html, body, #map { height: 100%; margin: 0; background: #0b1220; }
+    .leaflet-container { font-family: "Segoe UI", sans-serif; }
+    #map-error {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Segoe UI", sans-serif;
+      color: #9fb3d9;
+      background: #0b1220;
+      padding: 24px;
+      text-align: center;
+    }
+    .station-label {
+      background: rgba(10, 18, 32, 0.9);
+      color: #a8d7ff;
+      border: 1px solid rgba(82, 120, 170, 0.4);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    function postLog(msg) {
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.postMessage({ type: 'log', message: msg });
+      }
+    }
+
+    window.addEventListener('error', (e) => {
+      postLog(`JS error: ${e.message} at ${e.filename}:${e.lineno}:${e.colno}`);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      postLog('DOM content loaded.');
+    });
+  </script>
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+  <script>
+    postLog('Leaflet script loaded.');
+
+    function showError(message) {
+      const errorDiv = document.createElement('div');
+      errorDiv.id = 'map-error';
+      errorDiv.textContent = message;
+      document.body.appendChild(errorDiv);
+    }
+
+    if (typeof L === 'undefined') {
+      postLog('Leaflet failed to load: L is undefined.');
+      showError('Map failed to load (Leaflet not available).');
+    } else {
+      let map = null;
+      let tiles = null;
+      let satMarker = null;
+      let stationMarker = null;
+      let trackPast = [];
+      let trackFuture = [];
+      let hasCentered = false;
+
+      try {
+        map = L.map('map', { zoomControl: true }).setView([0, 0], 2);
+        tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
+        });
+
+        tiles.on('tileerror', (e) => {
+          postLog('Tile load error: ' + (e.error || 'unknown'));
+        });
+
+        tiles.addTo(map);
+        postLog('Map initialized.');
+      } catch (err) {
+        postLog('Leaflet init failed: ' + err);
+        showError('Map failed to initialize.');
+      }
+
+      function updateSatellite(lat, lon, label) {
+        if (!map) return;
+        if (!satMarker) {
+          satMarker = L.marker([lat, lon]).addTo(map);
+        } else {
+          satMarker.setLatLng([lat, lon]);
+        }
+        satMarker.bindPopup(label || 'Satellite');
+        if (!hasCentered) {
+          map.setView([lat, lon], 3);
+          hasCentered = true;
+        }
+      }
+
+      function updateStation(lat, lon, label) {
+        if (!map) return;
+        if (!stationMarker) {
+          stationMarker = L.circleMarker([lat, lon], {
+            radius: 7,
+            color: '#4dd6e6',
+            weight: 2,
+            fillColor: '#4dd6e6',
+            fillOpacity: 0.85
+          }).addTo(map);
+        } else {
+          stationMarker.setLatLng([lat, lon]);
+        }
+        stationMarker.bindPopup(label || 'Ground Station');
+        if (label) {
+          stationMarker.bindTooltip(label, { permanent: true, direction: 'right', offset: [8, 0], className: 'station-label' });
+        }
+      }
+
+      function updateTrack(points, kind) {
+        if (!map) return;
+        const lines = kind === 'future' ? trackFuture : trackPast;
+        lines.forEach(line => map.removeLayer(line));
+        lines.length = 0;
+        if (!points || points.length < 2) return;
+
+        const segments = [];
+        let segment = [];
+        for (let i = 0; i < points.length; i++) {
+          const p = points[i];
+          if (!p) continue;
+          if (segment.length === 0) {
+            segment.push([p.lat, p.lon]);
+          } else {
+            const prev = segment[segment.length - 1];
+            const prevLon = prev[1];
+            if (Math.abs(p.lon - prevLon) > 180) {
+              segments.push(segment);
+              segment = [[p.lat, p.lon]];
+            } else {
+              segment.push([p.lat, p.lon]);
+            }
+          }
+        }
+        if (segment.length) segments.push(segment);
+
+        const style = kind === 'future'
+          ? { color: '#f6c453', weight: 2, opacity: 0.85, dashArray: '6 6' }
+          : { color: '#4dd6e6', weight: 2, opacity: 0.85 };
+
+        segments.forEach(seg => {
+          const line = L.polyline(seg, style);
+          line.addTo(map);
+          lines.push(line);
+        });
+      }
+
+      function setMode(text) {
+        if (text) {
+          document.title = text;
+        }
+      }
+
+      if (window.chrome && window.chrome.webview) {
+        window.chrome.webview.addEventListener('message', event => {
+          const data = event.data;
+          if (!data || !data.type) return;
+          if (data.type === 'sat') {
+            updateSatellite(data.lat, data.lon, data.label);
+          } else if (data.type === 'station') {
+            updateStation(data.lat, data.lon, data.label);
+          } else if (data.type === 'mode') {
+            setMode(data.label);
+          } else if (data.type === 'track') {
+            updateTrack(data.points, data.kind);
+          }
+        });
+        postLog('WebView messaging ready.');
+        window.chrome.webview.postMessage({ type: 'ready' });
+      } else {
+        postLog('WebView messaging not available.');
+      }
+    }
+  </script>
+</body>
+</html>
